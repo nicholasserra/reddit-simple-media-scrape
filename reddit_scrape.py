@@ -16,10 +16,11 @@ except ImportError:
 class RedditScrape(object):
     PROFILE_URL = 'https://www.reddit.com/user/{}/submitted.json'
 
-    def __init__(self, username, directory, dry_run):
+    def __init__(self, username, directory, dry_run, prefix):
         self.username = username
         self.directory = directory
         self.dry_run = dry_run
+        self.prefix = prefix
 
     def scrape(self):
         user_url = self.PROFILE_URL.format(self.username)
@@ -47,6 +48,9 @@ class RedditScrape(object):
                         # Unknown url format
                         continue
 
+                    if self.prefix:
+                        filename = '{}-{}'.format(self.prefix, filename)
+
                     if not self.dry_run:
                         path = os.path.join(self.directory, filename)
 
@@ -72,9 +76,11 @@ def main():
     parser.add_argument('directory', nargs='?', default=os.path.dirname(os.path.realpath(__file__)))
     parser.add_argument('--dry-run', dest='dry_run', action='store_true',
                         default=False, help='Dry run')
+    parser.add_argument('-p', '--prefix', dest='prefix', action='store',
+        required=False, help='Filename prefix. Automatically hyphenates.')
     args = parser.parse_args()
 
-    scraper = RedditScrape(args.username, args.directory, args.dry_run)
+    scraper = RedditScrape(args.username, args.directory, args.dry_run, args.prefix)
     scraper.scrape()
 
 
