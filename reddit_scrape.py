@@ -18,6 +18,10 @@ class RedditScrape(object):
 
     def __init__(self, username, directory, dry_run, prefix):
         self.username = username
+
+        if not os.path.isdir(directory):
+            raise RuntimeError('Invalid directory')
+
         self.directory = directory
         self.dry_run = dry_run
         self.prefix = prefix
