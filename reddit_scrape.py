@@ -48,7 +48,11 @@ class RedditScrape(object):
                         continue
 
                     if not self.dry_run:
-                        urlretrieve(url, os.path.join(self.directory, filename))
+                        path = os.path.join(self.directory, filename)
+
+                        # Check if file already exists
+                        if not os.path.isfile(path):
+                            urlretrieve(url, path)
 
                     sys.stdout.write('.')
                     sys.stdout.flush()
